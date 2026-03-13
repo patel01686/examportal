@@ -22,6 +22,7 @@
       padding: 20px;
     }
 
+    /* Navigation */
     nav {
       max-width: 1200px;
       margin: 0 auto 30px;
@@ -30,13 +31,19 @@
       padding: 12px 25px;
       box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
       display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .nav-links {
+      display: flex;
       flex-wrap: wrap;
       align-items: center;
-      justify-content: center;
       gap: 15px 25px;
     }
 
-    nav a {
+    .nav-links a {
       color: #333;
       text-decoration: none;
       font-weight: 500;
@@ -47,16 +54,16 @@
       gap: 6px;
     }
 
-    nav a i {
+    .nav-links a i {
       color: #667eea;
       font-size: 16px;
     }
 
-    nav a:hover {
+    .nav-links a:hover {
       color: #667eea;
     }
 
-    nav a:last-child {
+    .nav-links a:last-child {
       background: #f44336;
       color: white;
       padding: 6px 16px;
@@ -64,8 +71,59 @@
       transition: background 0.3s;
     }
 
-    nav a:last-child:hover {
+    .nav-links a:last-child:hover {
       background: #d32f2f;
+    }
+
+    /* Hamburger menu icon */
+    .menu-icon {
+      display: none;
+      font-size: 24px;
+      color: #667eea;
+      cursor: pointer;
+    }
+
+    /* Mobile styles */
+    @media (max-width: 600px) {
+      nav {
+        border-radius: 20px;
+        padding: 12px 20px;
+      }
+
+      .menu-icon {
+        display: block;
+      }
+
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        flex-direction: column;
+        padding: 20px;
+        border-radius: 0 0 20px 20px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        gap: 15px;
+        z-index: 10;
+      }
+
+      .nav-links.show {
+        display: flex;
+      }
+
+      .nav-links a {
+        width: 100%;
+        justify-content: center;
+        padding: 10px;
+      }
+
+      .nav-links a:last-child {
+        background: #f44336;
+        color: white;
+        padding: 10px;
+      }
     }
 
     .container {
@@ -144,11 +202,8 @@
       margin-bottom: 10px;
     }
 
+    /* Responsive adjustments */
     @media (max-width: 600px) {
-      nav {
-        border-radius: 20px;
-        padding: 12px 20px;
-      }
       .container {
         padding: 20px;
       }
@@ -157,10 +212,15 @@
 </head>
 <body>
   <nav>
-    <a href="student-dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-    <a href="student-profile.html"><i class="fas fa-user-circle"></i> Profile</a>
-    <a href="student-history.html"><i class="fas fa-history"></i> History</a>
-    <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    <div class="menu-icon" onclick="toggleMenu()">
+      <i class="fas fa-bars"></i>
+    </div>
+    <div class="nav-links" id="navLinks">
+      <a href="student-dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+      <a href="student-profile.html"><i class="fas fa-user-circle"></i> Profile</a>
+      <a href="student-history.html"><i class="fas fa-history"></i> History</a>
+      <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
   </nav>
 
   <div class="container">
@@ -218,6 +278,19 @@
       localStorage.clear();
       window.location.href = 'login.html';
     }
+
+    // Toggle mobile menu
+    function toggleMenu() {
+      const navLinks = document.getElementById('navLinks');
+      navLinks.classList.toggle('show');
+    }
+
+    // Close menu when a link is clicked (optional)
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => {
+        document.getElementById('navLinks').classList.remove('show');
+      });
+    });
 
     loadHistory();
   </script>
