@@ -6,7 +6,7 @@
   <title>Student Dashboard | Exam Portal</title>
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <!-- Font Awesome for icons (optional) -->
+  <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     * {
@@ -30,12 +30,21 @@
       align-items: center;
       color: white;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      position: relative;
     }
 
     .navbar .logo {
       font-size: 1.5rem;
       font-weight: 600;
       letter-spacing: 0.5px;
+    }
+
+    /* Hamburger menu icon */
+    .menu-icon {
+      display: none;
+      font-size: 24px;
+      color: white;
+      cursor: pointer;
     }
 
     .nav-links {
@@ -71,6 +80,43 @@
 
     .nav-links button:hover {
       background: rgba(255,255,255,0.3);
+    }
+
+    /* Mobile styles */
+    @media (max-width: 600px) {
+      .menu-icon {
+        display: block;
+      }
+
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        flex-direction: column;
+        padding: 1.5rem;
+        gap: 1rem;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        z-index: 10;
+      }
+
+      .nav-links.show {
+        display: flex;
+      }
+
+      .nav-links a, .nav-links button {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+      }
+
+      .nav-links button {
+        background: rgba(255,255,255,0.2);
+        border: 1px solid white;
+        margin-top: 0.5rem;
+      }
     }
 
     /* Main Container */
@@ -173,32 +219,15 @@
       color: #777;
       font-size: 1.1rem;
     }
-
-    /* Responsive */
-    @media (max-width: 600px) {
-      .navbar {
-        padding: 1rem;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-      .nav-links {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 0.8rem;
-      }
-      .container {
-        margin: 1rem auto;
-      }
-      h1 {
-        font-size: 1.8rem;
-      }
-    }
   </style>
 </head>
 <body>
   <nav class="navbar">
     <div class="logo">📚 Exam Portal</div>
-    <div class="nav-links">
+    <div class="menu-icon" onclick="toggleMenu()">
+      <i class="fas fa-bars"></i>
+    </div>
+    <div class="nav-links" id="navLinks">
       <a href="student-dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
       <a href="student-profile.html"><i class="fas fa-user"></i> Profile</a>
       <a href="student-history.html"><i class="fas fa-history"></i> History</a>
@@ -216,6 +245,19 @@
     if (!token || localStorage.getItem('role') !== 'student') {
       window.location.href = 'login.html';
     }
+
+    // Toggle mobile menu
+    function toggleMenu() {
+      const navLinks = document.getElementById('navLinks');
+      navLinks.classList.toggle('show');
+    }
+
+    // Close menu when clicking a link (optional)
+    document.querySelectorAll('.nav-links a, .nav-links button').forEach(item => {
+      item.addEventListener('click', () => {
+        document.getElementById('navLinks').classList.remove('show');
+      });
+    });
 
     async function loadExams() {
       try {
@@ -247,7 +289,6 @@
     }
 
     function startExam(examId) {
-      // Optional: you can navigate to instructions page first
       window.location.href = `exam.html?examId=${examId}`;
     }
 
