@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Exam History | Exam Portal</title>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    nav {
+      max-width: 1200px;
+      margin: 0 auto 30px;
+      background: white;
+      border-radius: 50px;
+      padding: 12px 25px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 15px 25px;
+    }
+
+    nav a {
+      color: #333;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 15px;
+      transition: color 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    nav a i {
+      color: #667eea;
+      font-size: 16px;
+    }
+
+    nav a:hover {
+      color: #667eea;
+    }
+
+    nav a:last-child {
+      background: #f44336;
+      color: white;
+      padding: 6px 16px;
+      border-radius: 30px;
+      transition: background 0.3s;
+    }
+
+    nav a:last-child:hover {
+      background: #d32f2f;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1000px;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: clamp(24px, 5vw, 32px);
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h1 i {
+      color: #667eea;
+      font-size: clamp(24px, 5vw, 32px);
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+      border-radius: 12px;
+      margin-top: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      min-width: 600px;
+    }
+
+    th {
+      background: #f8f9fa;
+      color: #333;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 16px 12px;
+      text-align: left;
+      border-bottom: 2px solid #e9ecef;
+    }
+
+    td {
+      padding: 14px 12px;
+      font-size: 14px;
+      color: #555;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background-color: #f8f9fa;
+    }
+
+    .empty-message {
+      text-align: center;
+      color: #999;
+      font-size: 16px;
+      padding: 40px;
+    }
+
+    .empty-message i {
+      font-size: 48px;
+      color: #ddd;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 600px) {
+      nav {
+        border-radius: 20px;
+        padding: 12px 20px;
+      }
+      .container {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="student-dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+    <a href="student-profile.html"><i class="fas fa-user-circle"></i> Profile</a>
+    <a href="student-history.html"><i class="fas fa-history"></i> History</a>
+    <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+  </nav>
+
+  <div class="container">
+    <h1><i class="fas fa-clock-rotate-left"></i> My Exam History</h1>
+    <div class="table-responsive">
+      <table id="historyTable">
+        <thead>
+          <tr>
+            <th>Exam</th>
+            <th>Correct</th>
+            <th>Wrong</th>
+            <th>Skipped</th>
+            <th>Score</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div id="message" class="empty-message"></div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
+    if (!token || role !== 'student') window.location.href = 'login.html';
+
+    async function loadHistory() {
+      const res = await fetch('/api/student/history', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const results = await res.json();
+      const tbody = document.querySelector('#historyTable tbody');
+      const messageEl = document.getElementById('message');
+      tbody.innerHTML = '';
+      if (results.length === 0) {
+        messageEl.innerHTML = '<i class="fas fa-folder-open"></i><br>No exam history yet.';
+        return;
+      }
+      messageEl.innerHTML = '';
+      results.forEach(r => {
+        const row = tbody.insertRow();
+        row.innerHTML = `
+          <td><i class="fas fa-pencil-alt" style="color: #667eea; margin-right: 6px;"></i>${r.examId?.title || 'N/A'}</td>
+          <td><span style="color: #28a745; font-weight: 500;">${r.correct}</span></td>
+          <td><span style="color: #dc3545; font-weight: 500;">${r.wrong}</span></td>
+          <td><span style="color: #ffc107; font-weight: 500;">${r.skipped}</span></td>
+          <td><strong>${r.score.toFixed(2)}%</strong></td>
+          <td>${new Date(r.createdAt).toLocaleString()}</td>
+        `;
+      });
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'login.html';
+    }
+
+    loadHistory();
+  </script>
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exam Review | Exam Portal</title>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 30px 20px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      padding: 30px 25px;
+    }
+
+    h1 {
+      font-size: clamp(24px, 5vw, 32px);
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    h1 i {
+      color: #667eea;
+      font-size: clamp(24px, 5vw, 32px);
+    }
+
+    .summary-box {
+      background: #f8f9fa;
+      border-radius: 16px;
+      padding: 20px;
+      margin: 20px 0 30px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 15px;
+      border: 1px solid #e9ecef;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: #777;
+      margin-bottom: 5px;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .correct-stat .stat-value { color: #28a745; }
+    .wrong-stat .stat-value { color: #dc3545; }
+    .skipped-stat .stat-value { color: #ffc107; }
+    .score-stat .stat-value { color: #667eea; }
+
+    .question-card {
+      border: 1px solid #e9ecef;
+      border-radius: 16px;
+      padding: 20px;
+      margin: 15px 0;
+      transition: transform 0.2s, box-shadow 0.2s;
+      background: white;
+    }
+
+    .question-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .correct {
+      border-left: 6px solid #28a745;
+    }
+    .wrong {
+      border-left: 6px solid #dc3545;
+    }
+    .skipped {
+      border-left: 6px solid #ffc107;
+    }
+
+    .question-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .question-title i {
+      color: #667eea;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 15px 0;
+    }
+
+    .option {
+      padding: 10px 15px;
+      border-radius: 10px;
+      background: #f8f9fa;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid transparent;
+    }
+
+    .option.student-choice {
+      border: 2px solid #667eea;
+      background: #e6e9ff;
+    }
+
+    .correct-mark {
+      color: #28a745;
+      font-weight: 600;
+      margin-left: auto;
+    }
+
+    .feedback {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px dashed #dee2e6;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .feedback-badge {
+      padding: 5px 15px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .correct-badge {
+      background: #d4edda;
+      color: #155724;
+    }
+    .wrong-badge {
+      background: #f8d7da;
+      color: #721c24;
+    }
+    .skipped-badge {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    button {
+      background: white;
+      border: 2px solid #667eea;
+      color: #667eea;
+      padding: 12px 30px;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 20px 0 0;
+    }
+
+    button:hover {
+      background: #667eea;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px 15px;
+      }
+      .summary-box {
+        grid-template-columns: 1fr 1fr;
+      }
+      .option {
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>
+      <i class="fas fa-clipboard-check"></i> 
+      <span id="examTitle">Exam Review</span>
+    </h1>
+    <div id="summary" class="summary-box"></div>
+    <div id="questions"></div>
+    <button onclick="goBack()"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('token');
+    if (!token || localStorage.getItem('role') !== 'student') {
+      window.location.href = 'login.html';
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const resultId = urlParams.get('resultId');
+    if (!resultId) {
+      alert('No result specified');
+      window.location.href = 'student-dashboard.html';
+    }
+
+    async function loadReview() {
+      const res = await fetch(`/api/student/result/${resultId}/details`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.msg || 'Error loading review');
+        window.location.href = 'student-dashboard.html';
+        return;
+      }
+      displayReview(data);
+    }
+
+    function displayReview(result) {
+      document.getElementById('examTitle').innerHTML = (result.examId?.title || 'Exam') + ' - Review';
+      
+      const summary = document.getElementById('summary');
+      const total = result.correct + result.wrong + result.skipped;
+      summary.innerHTML = `
+        <div class="stat correct-stat">
+          <div class="stat-label"><i class="fas fa-check-circle"></i> Correct</div>
+          <div class="stat-value">${result.correct}</div>
+        </div>
+        <div class="stat wrong-stat">
+          <div class="stat-label"><i class="fas fa-times-circle"></i> Wrong</div>
+          <div class="stat-value">${result.wrong}</div>
+        </div>
+        <div class="stat skipped-stat">
+          <div class="stat-label"><i class="fas fa-forward"></i> Skipped</div>
+          <div class="stat-value">${result.skipped}</div>
+        </div>
+        <div class="stat score-stat">
+          <div class="stat-label"><i class="fas fa-star"></i> Score</div>
+          <div class="stat-value">${result.score.toFixed(2)}%</div>
+        </div>
+      `;
+
+      const container = document.getElementById('questions');
+      container.innerHTML = '';
+
+      // Create a map for quick lookup
+      const answerMap = {};
+      result.answers.forEach(a => answerMap[a.questionId._id] = a.selectedOption);
+
+      result.answers.forEach(a => {
+        const q = a.questionId;
+        const selected = a.selectedOption;
+        const correctAns = q.correctAnswer;
+
+        let cardClass = 'question-card';
+        let badgeClass = '';
+        let badgeText = '';
+
+        if (selected === 'skip') {
+          cardClass += ' skipped';
+          badgeClass = 'skipped-badge';
+          badgeText = 'Skipped';
+        } else if (selected === correctAns) {
+          cardClass += ' correct';
+          badgeClass = 'correct-badge';
+          badgeText = 'Correct';
+        } else {
+          cardClass += ' wrong';
+          badgeClass = 'wrong-badge';
+          badgeText = 'Incorrect';
+        }
+
+        const card = document.createElement('div');
+        card.className = cardClass;
+        card.innerHTML = `
+          <div class="question-title">
+            <i class="fas fa-question-circle"></i> ${q.question}
+          </div>
+          <div class="options">
+            <div class="option ${selected === 'A' ? 'student-choice' : ''}">
+              <span><strong>A:</strong> ${q.optionA}</span>
+              ${correctAns === 'A' ? '<span class="correct-mark">✅ Correct answer</span>' : ''}
+            </div>
+            <div class="option ${selected === 'B' ? 'student-choice' : ''}">
+              <span><strong>B:</strong> ${q.optionB}</span>
+              ${correctAns === 'B' ? '<span class="correct-mark">✅ Correct answer</span>' : ''}
+            </div>
+            <div class="option ${selected === 'C' ? 'student-choice' : ''}">
+              <span><strong>C:</strong> ${q.optionC}</span>
+              ${correctAns === 'C' ? '<span class="correct-mark">✅ Correct answer</span>' : ''}
+            </div>
+            <div class="option ${selected === 'D' ? 'student-choice' : ''}">
+              <span><strong>D:</strong> ${q.optionD}</span>
+              ${correctAns === 'D' ? '<span class="correct-mark">✅ Correct answer</span>' : ''}
+            </div>
+          </div>
+          <div class="feedback">
+            <span class="feedback-badge ${badgeClass}">${badgeText}</span>
+            <span><i class="fas fa-user-graduate"></i> Your choice: ${selected === 'skip' ? 'Skipped' : selected}</span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function goBack() {
+      window.location.href = 'student-dashboard.html';
+    }
+
+    loadReview();
+  </script>
+</body>
+</html>

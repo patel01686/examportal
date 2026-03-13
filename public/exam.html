@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exam | Exam Portal</title>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome (optional, for icons) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    #exam-container {
+      width: 100%;
+      max-width: 800px;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      padding: 30px 25px;
+    }
+
+    #timer {
+      font-size: clamp(20px, 6vw, 28px);
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 25px;
+      padding: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 50px;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+      letter-spacing: 1px;
+    }
+
+    .question-container {
+      background: #f8f9fa;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid #e9ecef;
+    }
+
+    .question {
+      display: none;
+    }
+
+    .question.active {
+      display: block;
+    }
+
+    .question h3 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .question h3 i {
+      color: #667eea;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    .options label {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      background: white;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 16px;
+      gap: 12px;
+    }
+
+    .options label:hover {
+      border-color: #667eea;
+      background: #f0f3ff;
+      transform: translateY(-2px);
+    }
+
+    .options input[type="radio"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #667eea;
+      cursor: pointer;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 25px;
+    }
+
+    .btn-group button {
+      padding: 14px 28px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-width: 120px;
+    }
+
+    #prevBtn {
+      background: white;
+      border: 2px solid #6c757d;
+      color: #6c757d;
+    }
+    #prevBtn:hover {
+      background: #6c757d;
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    #nextBtn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+    #nextBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    #skipBtn {
+      background: white;
+      border: 2px solid #ffc107;
+      color: #ffc107;
+    }
+    #skipBtn:hover {
+      background: #ffc107;
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    #submitBtn {
+      background: #28a745;
+      color: white;
+      box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+    }
+    #submitBtn:hover {
+      background: #218838;
+      transform: translateY(-2px);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      #exam-container {
+        padding: 20px 15px;
+      }
+      .btn-group button {
+        width: 100%;
+        margin: 0;
+      }
+      .options label {
+        padding: 10px 12px;
+        font-size: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="exam-container">
+    <div id="timer"></div>
+    <div class="question-container">
+      <div id="questions"></div>
+    </div>
+    <div class="btn-group">
+      <button id="prevBtn" onclick="prevQuestion()"><i class="fas fa-arrow-left"></i> Previous</button>
+      <button id="nextBtn" onclick="nextQuestion()">Next <i class="fas fa-arrow-right"></i></button>
+      <button id="skipBtn" onclick="skipQuestion()"><i class="fas fa-forward"></i> Skip</button>
+      <button id="submitBtn" onclick="submitExam()"><i class="fas fa-check-circle"></i> Submit</button>
+    </div>
+  </div>
+
+  <script>
+    // --- YOUR EXACT ORIGINAL SCRIPT (unchanged) ---
+    const token = localStorage.getItem('token');
+    if (!token || localStorage.getItem('role') !== 'student') {
+      window.location.href = 'login.html';
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const examId = urlParams.get('examId');
+    let exam = null;
+    let questions = [];
+    let currentIndex = 0;
+    let answers = []; // { questionId, selected }
+    let timerInterval = null;
+    let duration = 0; // in seconds
+
+    // Anti-cheating
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('copy', e => e.preventDefault());
+    document.addEventListener('paste', e => e.preventDefault());
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        alert('Tab switching is not allowed. Exam auto-submitted.');
+        submitExam(true);
+      }
+    });
+
+    function requestFullscreen() {
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) elem.requestFullscreen();
+    }
+
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement) {
+        alert('Exiting fullscreen is not allowed. Exam auto-submitted.');
+        submitExam(true);
+      }
+    });
+
+    async function loadExam() {
+      const res = await fetch(`/api/student/exam/${examId}/start`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.msg);
+        window.location.href = 'student-dashboard.html';
+        return;
+      }
+      exam = data.exam;
+      questions = data.questions;
+      duration = exam.duration * 60;
+      answers = questions.map(q => ({ questionId: q._id, selected: null }));
+      renderQuestions();
+      startTimer();
+      requestFullscreen();
+    }
+
+    function renderQuestions() {
+      const container = document.getElementById('questions');
+      container.innerHTML = '';
+      questions.forEach((q, idx) => {
+        const div = document.createElement('div');
+        div.className = 'question' + (idx === 0 ? ' active' : '');
+        div.innerHTML = `
+          <h3><i class="fas fa-question-circle"></i> Question ${idx+1}: ${q.question}</h3>
+          <div class="options">
+            <label><input type="radio" name="q${idx}" value="A" ${answers[idx] && answers[idx].selected === 'A' ? 'checked' : ''}> ${q.optionA}</label>
+            <label><input type="radio" name="q${idx}" value="B" ${answers[idx] && answers[idx].selected === 'B' ? 'checked' : ''}> ${q.optionB}</label>
+            <label><input type="radio" name="q${idx}" value="C" ${answers[idx] && answers[idx].selected === 'C' ? 'checked' : ''}> ${q.optionC}</label>
+            <label><input type="radio" name="q${idx}" value="D" ${answers[idx] && answers[idx].selected === 'D' ? 'checked' : ''}> ${q.optionD}</label>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+      updateNavButtons();
+    }
+
+    function updateNavButtons() {
+      document.getElementById('prevBtn').style.display = currentIndex > 0 ? 'inline-flex' : 'none';
+      document.getElementById('nextBtn').style.display = currentIndex < questions.length - 1 ? 'inline-flex' : 'none';
+      document.getElementById('submitBtn').style.display = currentIndex === questions.length - 1 ? 'inline-flex' : 'none';
+      document.getElementById('skipBtn').style.display = 'inline-flex';
+    }
+
+    function showQuestion(index) {
+      document.querySelectorAll('.question').forEach((el, i) => {
+        el.classList.toggle('active', i === index);
+      });
+      updateNavButtons();
+    }
+
+    function saveCurrentAnswer() {
+      const radios = document.getElementsByName(`q${currentIndex}`);
+      let selected = null;
+      for (let radio of radios) {
+        if (radio.checked) {
+          selected = radio.value;
+          break;
+        }
+      }
+      answers[currentIndex].selected = selected;
+    }
+
+    function nextQuestion() {
+      saveCurrentAnswer();
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        showQuestion(currentIndex);
+      }
+    }
+
+    function prevQuestion() {
+      saveCurrentAnswer();
+      if (currentIndex > 0) {
+        currentIndex--;
+        showQuestion(currentIndex);
+      }
+    }
+
+    function skipQuestion() {
+      answers[currentIndex].selected = 'skip';
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        showQuestion(currentIndex);
+      } else {
+        showQuestion(currentIndex);
+      }
+    }
+
+    async function submitExam(force = false) {
+      if (!force && !confirm('Are you sure you want to submit?')) return;
+      saveCurrentAnswer();
+      if (timerInterval) clearInterval(timerInterval);
+      const res = await fetch(`/api/student/exam/${examId}/submit`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ answers })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        localStorage.setItem('lastResult', JSON.stringify(data.result));
+        window.location.href = 'result.html';
+      } else {
+        alert('Submission failed');
+      }
+    }
+
+    function startTimer() {
+      const timerEl = document.getElementById('timer');
+      function updateTimer() {
+        const minutes = Math.floor(duration / 60);
+        const seconds = duration % 60;
+        timerEl.textContent = `⏳ Time left: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        if (duration <= 0) {
+          clearInterval(timerInterval);
+          alert('Time is up! Auto-submitting.');
+          submitExam(true);
+        }
+        duration--;
+      }
+      updateTimer();
+      timerInterval = setInterval(updateTimer, 1000);
+    }
+
+    loadExam();
+  </script>
+</body>
+</html>

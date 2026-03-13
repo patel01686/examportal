@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exam Result | Exam Portal</title>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .result-box {
+      width: 100%;
+      max-width: 500px;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      padding: 40px 30px;
+      transition: transform 0.3s ease;
+    }
+
+    .result-box:hover {
+      transform: translateY(-5px);
+    }
+
+    h2 {
+      font-size: 32px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    h2 i {
+      color: #667eea;
+      font-size: 32px;
+    }
+
+    .subtitle {
+      color: #777;
+      font-size: 15px;
+      margin-bottom: 30px;
+      text-align: center;
+      border-left: 4px solid #667eea;
+      padding-left: 15px;
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin: 30px 0;
+    }
+
+    .stat-card {
+      background: #f8f9fa;
+      border-radius: 16px;
+      padding: 20px 10px;
+      text-align: center;
+      border: 1px solid #e9ecef;
+      transition: transform 0.2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-icon {
+      font-size: 28px;
+      color: #667eea;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: #777;
+      margin-bottom: 5px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .stat-total .stat-value { color: #333; }
+    .stat-correct .stat-value { color: #28a745; }
+    .stat-wrong .stat-value { color: #dc3545; }
+    .stat-skipped .stat-value { color: #ffc107; }
+    .stat-score .stat-value { color: #667eea; }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 25px;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      flex: 1 1 auto;
+      min-width: 180px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+      background: white;
+      border: 2px solid #667eea;
+      color: #667eea;
+    }
+
+    .btn-secondary:hover {
+      background: #667eea;
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    @media (max-width: 500px) {
+      .result-box {
+        padding: 30px 20px;
+      }
+      h2 {
+        font-size: 28px;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="result-box">
+    <h2>
+      <i class="fas fa-clipboard-check"></i> 
+      Exam Result
+    </h2>
+    <div class="subtitle">Here's how you performed</div>
+    <div id="result" class="stats-grid"></div>
+    <div class="button-group">
+      <button class="btn btn-primary" id="reviewBtn" onclick="reviewExam()"><i class="fas fa-search"></i> Review Exam</button>
+      <button class="btn btn-secondary" onclick="location.href='student-dashboard.html'"><i class="fas fa-arrow-left"></i> Dashboard</button>
+    </div>
+  </div>
+
+  <script>
+    const result = JSON.parse(localStorage.getItem('lastResult'));
+    if (!result) {
+      window.location.href = 'student-dashboard.html';
+    }
+
+    // Display result stats
+    const total = result.correct + result.wrong + result.skipped;
+    document.getElementById('result').innerHTML = `
+      <div class="stat-card stat-total">
+        <div class="stat-icon"><i class="fas fa-list-ol"></i></div>
+        <div class="stat-label">Total</div>
+        <div class="stat-value">${total}</div>
+      </div>
+      <div class="stat-card stat-correct">
+        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-label">Correct</div>
+        <div class="stat-value">${result.correct}</div>
+      </div>
+      <div class="stat-card stat-wrong">
+        <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+        <div class="stat-label">Wrong</div>
+        <div class="stat-value">${result.wrong}</div>
+      </div>
+      <div class="stat-card stat-skipped">
+        <div class="stat-icon"><i class="fas fa-forward"></i></div>
+        <div class="stat-label">Skipped</div>
+        <div class="stat-value">${result.skipped}</div>
+      </div>
+      <div class="stat-card stat-score" style="grid-column: span 2;">
+        <div class="stat-icon"><i class="fas fa-star"></i></div>
+        <div class="stat-label">Score</div>
+        <div class="stat-value">${result.score.toFixed(2)}%</div>
+      </div>
+    `;
+
+    // Set up review button
+    const reviewBtn = document.getElementById('reviewBtn');
+    if (result.examId) {
+      reviewBtn.onclick = function() {
+        window.location.href = `exam-review.html?examId=${result.examId}`;
+      };
+    } else {
+      reviewBtn.disabled = true;
+      reviewBtn.style.opacity = 0.5;
+      reviewBtn.title = 'Review not available';
+    }
+  </script>
+</body>
+</html>

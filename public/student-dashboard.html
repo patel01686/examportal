@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard | Exam Portal</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- Font Awesome for icons (optional) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+    }
+
+    /* Navigation Bar */
+    .navbar {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .navbar .logo {
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.5rem 0;
+      border-bottom: 2px solid transparent;
+      transition: border-color 0.3s;
+    }
+
+    .nav-links a:hover {
+      border-bottom-color: white;
+    }
+
+    .nav-links button {
+      background: rgba(255,255,255,0.2);
+      border: 1px solid white;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.3s;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .nav-links button:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Exam Grid */
+    .exam-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .exam-card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+      transition: transform 0.3s, box-shadow 0.3s;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #eaeaea;
+    }
+
+    .exam-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+    }
+
+    .exam-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 0.75rem;
+    }
+
+    .exam-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .detail-item {
+      flex: 1 1 auto;
+      background: #f8f9fa;
+      padding: 0.5rem 0.75rem;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      color: #555;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .detail-item i {
+      color: #667eea;
+      width: 18px;
+    }
+
+    .btn-start {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 0.9rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.3s, transform 0.2s;
+      font-family: 'Poppins', sans-serif;
+      margin-top: auto;
+    }
+
+    .btn-start:hover {
+      opacity: 0.9;
+      transform: scale(1.02);
+    }
+
+    .btn-start:active {
+      transform: scale(0.98);
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      background: white;
+      border-radius: 16px;
+      color: #777;
+      font-size: 1.1rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .navbar {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.8rem;
+      }
+      .container {
+        margin: 1rem auto;
+      }
+      h1 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">📚 Exam Portal</div>
+    <div class="nav-links">
+      <a href="student-dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+      <a href="student-profile.html"><i class="fas fa-user"></i> Profile</a>
+      <a href="student-history.html"><i class="fas fa-history"></i> History</a>
+      <button onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1>📋 Available Exams</h1>
+    <div id="examList" class="exam-grid"></div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('token');
+    if (!token || localStorage.getItem('role') !== 'student') {
+      window.location.href = 'login.html';
+    }
+
+    async function loadExams() {
+      try {
+        const res = await fetch('/api/student/exams', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error('Failed to load exams');
+        const exams = await res.json();
+        const list = document.getElementById('examList');
+        if (exams.length === 0) {
+          list.innerHTML = '<div class="empty-state">📭 No exams available at the moment.</div>';
+          return;
+        }
+        list.innerHTML = exams.map(exam => `
+          <div class="exam-card">
+            <div class="exam-title">${exam.title}</div>
+            <div class="exam-details">
+              <span class="detail-item"><i class="fas fa-clock"></i> ${exam.duration} min</span>
+              <span class="detail-item"><i class="fas fa-question-circle"></i> ${exam.totalQuestions} Qs</span>
+              <span class="detail-item"><i class="fas fa-star"></i> ${exam.marksPerQuestion} marks/Q</span>
+            </div>
+            <button class="btn-start" onclick="startExam('${exam._id}')">Start Exam</button>
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error(err);
+        document.getElementById('examList').innerHTML = '<div class="empty-state" style="color:#e74c3c;">⚠️ Error loading exams. Please refresh.</div>';
+      }
+    }
+
+    function startExam(examId) {
+      // Optional: you can navigate to instructions page first
+      window.location.href = `exam.html?examId=${examId}`;
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      window.location.href = 'login.html';
+    }
+
+    loadExams();
+  </script>
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Exam | Exam Portal</title>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- Font Awesome icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 450px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      padding: 40px 35px;
+      transition: transform 0.3s ease;
+    }
+
+    .container:hover {
+      transform: translateY(-5px);
+    }
+
+    h2 {
+      font-size: 28px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h2 i {
+      color: #667eea;
+      font-size: 28px;
+    }
+
+    .subtitle {
+      color: #777;
+      font-size: 14px;
+      margin-bottom: 30px;
+      border-left: 4px solid #667eea;
+      padding-left: 15px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: #555;
+      margin-bottom: 6px;
+      margin-top: 15px;
+    }
+
+    label:first-of-type {
+      margin-top: 0;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 15px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      font-family: 'Poppins', sans-serif;
+      background: #fafafa;
+    }
+
+    input:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      background: white;
+    }
+
+    button {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.3s, transform 0.2s;
+      margin-top: 25px;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    button:hover {
+      opacity: 0.9;
+      transform: scale(1.02);
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .message {
+      text-align: center;
+      margin-top: 20px;
+      font-weight: 500;
+      padding: 12px;
+      border-radius: 8px;
+    }
+
+    .message.success {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .message.error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    /* Responsive */
+    @media (max-width: 500px) {
+      .container {
+        padding: 30px 20px;
+      }
+      h2 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>
+      <i class="fas fa-plus-circle"></i> 
+      Create Exam
+    </h2>
+    <div class="subtitle">Fill in the details to create a new exam</div>
+    <form id="examForm">
+      <label for="title"><i class="fas fa-heading" style="margin-right: 6px;"></i>Exam Title</label>
+      <input type="text" id="title" placeholder="e.g. Mathematics Final" required>
+
+      <label for="duration"><i class="fas fa-clock"></i> Duration (minutes)</label>
+      <input type="number" id="duration" placeholder="60" min="1" required>
+
+      <label for="totalQuestions"><i class="fas fa-list-ol"></i> Total Questions</label>
+      <input type="number" id="totalQuestions" placeholder="20" min="1" required>
+
+      <label for="marksPerQuestion"><i class="fas fa-star"></i> Marks Per Question</label>
+      <input type="number" id="marksPerQuestion" placeholder="1" min="1" required>
+
+      <button type="submit"><i class="fas fa-check-circle"></i> Create Exam</button>
+    </form>
+    <p id="message" class="message"></p>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('token');
+    if (!token || localStorage.getItem('role') !== 'admin') {
+      window.location.href = 'login.html';
+    }
+
+    document.getElementById('examForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const exam = {
+        title: document.getElementById('title').value,
+        duration: parseInt(document.getElementById('duration').value),
+        totalQuestions: parseInt(document.getElementById('totalQuestions').value),
+        marksPerQuestion: parseInt(document.getElementById('marksPerQuestion').value)
+      };
+      const res = await fetch('/api/exams', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(exam)
+      });
+      const data = await res.json();
+      const msgEl = document.getElementById('message');
+      if (res.ok) {
+        msgEl.innerHTML = `✅ Exam created! <strong>ID:</strong> ${data.examId}`;
+        msgEl.classList.add('success');
+        msgEl.classList.remove('error');
+      } else {
+        msgEl.innerHTML = '❌ ' + (data.msg || 'Error creating exam');
+        msgEl.classList.add('error');
+        msgEl.classList.remove('success');
+      }
+    });
+  </script>
+</body>
+</html>

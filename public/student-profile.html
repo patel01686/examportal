@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile | Exam Portal</title>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    nav {
+      max-width: 1200px;
+      margin: 0 auto 30px;
+      background: white;
+      border-radius: 50px;
+      padding: 12px 25px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 15px 25px;
+    }
+
+    nav a {
+      color: #333;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 15px;
+      transition: color 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    nav a i {
+      color: #667eea;
+      font-size: 16px;
+    }
+
+    nav a:hover {
+      color: #667eea;
+    }
+
+    nav a:last-child {
+      background: #f44336;
+      color: white;
+      padding: 6px 16px;
+      border-radius: 30px;
+      transition: background 0.3s;
+    }
+
+    nav a:last-child:hover {
+      background: #d32f2f;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      padding: 40px 35px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: clamp(24px, 5vw, 32px);
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h1 i {
+      color: #667eea;
+      font-size: clamp(24px, 5vw, 32px);
+    }
+
+    .subtitle {
+      color: #777;
+      font-size: 14px;
+      margin-bottom: 30px;
+      border-left: 4px solid #667eea;
+      padding-left: 15px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: #555;
+      margin-bottom: 6px;
+      margin-top: 15px;
+    }
+
+    label:first-of-type {
+      margin-top: 0;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 15px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      font-family: 'Poppins', sans-serif;
+      background: #fafafa;
+    }
+
+    input:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      background: white;
+    }
+
+    input:disabled {
+      background: #e9ecef;
+      color: #6c757d;
+      cursor: not-allowed;
+    }
+
+    h3 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      margin: 25px 0 10px;
+      border-bottom: 2px solid #f0f0f0;
+      padding-bottom: 10px;
+    }
+
+    button {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.3s, transform 0.2s;
+      margin-top: 25px;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    button:hover {
+      opacity: 0.9;
+      transform: scale(1.02);
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .message {
+      text-align: center;
+      margin-top: 20px;
+      font-weight: 500;
+      padding: 12px;
+      border-radius: 8px;
+    }
+
+    .message.success {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .message.error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    @media (max-width: 600px) {
+      nav {
+        border-radius: 20px;
+        padding: 12px 20px;
+      }
+      .container {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="student-dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+    <a href="student-profile.html"><i class="fas fa-user-circle"></i> Profile</a>
+    <a href="student-history.html"><i class="fas fa-history"></i> History</a>
+    <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+  </nav>
+
+  <div class="container">
+    <h1><i class="fas fa-id-card"></i> My Profile</h1>
+    <div class="subtitle">View and update your personal information</div>
+    <form id="profileForm">
+      <label for="name"><i class="fas fa-user"></i> Full Name</label>
+      <input type="text" id="name" required>
+
+      <label for="email"><i class="fas fa-envelope"></i> Email (cannot change)</label>
+      <input type="email" id="email" disabled>
+
+      <h3><i class="fas fa-lock"></i> Change Password</h3>
+      <label for="currentPassword">Current Password</label>
+      <input type="password" id="currentPassword" placeholder="Leave blank to keep unchanged">
+
+      <label for="newPassword">New Password</label>
+      <input type="password" id="newPassword" placeholder="Leave blank to keep unchanged">
+
+      <button type="submit"><i class="fas fa-save"></i> Update Profile</button>
+    </form>
+    <p id="message" class="message"></p>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
+    if (!token || role !== 'student') window.location.href = 'login.html';
+
+    async function loadProfile() {
+      const res = await fetch('/api/student/profile', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      document.getElementById('name').value = data.name;
+      document.getElementById('email').value = data.email;
+    }
+
+    document.getElementById('profileForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const currentPassword = document.getElementById('currentPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const body = { name };
+      if (currentPassword && newPassword) {
+        body.currentPassword = currentPassword;
+        body.newPassword = newPassword;
+      }
+      const res = await fetch('/api/student/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      const msgEl = document.getElementById('message');
+      if (res.ok) {
+        msgEl.innerHTML = '<i class="fas fa-check-circle"></i> ' + (data.msg || 'Profile updated');
+        msgEl.classList.add('success');
+        msgEl.classList.remove('error');
+      } else {
+        msgEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + (data.msg || 'Error');
+        msgEl.classList.add('error');
+        msgEl.classList.remove('success');
+      }
+    });
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'login.html';
+    }
+
+    loadProfile();
+  </script>
+</body>
+</html>

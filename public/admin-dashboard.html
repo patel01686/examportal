@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Exam Portal</title>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;         /* Wider container for laptops */
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+    }
+
+    h1 {
+      font-size: clamp(24px, 5vw, 32px);
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    h1 i {
+      color: #667eea;
+      font-size: clamp(24px, 5vw, 32px);
+    }
+
+    h2 {
+      font-size: clamp(20px, 4vw, 24px);
+      font-weight: 500;
+      color: #555;
+      margin: 30px 0 20px;
+      border-left: 5px solid #667eea;
+      padding-left: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Navigation buttons row */
+    .nav-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 25px 0;
+      justify-content: flex-start;  /* Align left */
+    }
+
+    .nav-buttons button {
+      padding: 12px 20px;
+      background: white;
+      color: #667eea;
+      border: 2px solid #667eea;
+      border-radius: 50px;
+      font-size: clamp(14px, 2vw, 16px);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;         /* Prevent text wrapping inside button */
+    }
+
+    .nav-buttons button i {
+      font-size: 16px;
+    }
+
+    .nav-buttons button:hover {
+      background: #667eea;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .nav-buttons button:active {
+      transform: translateY(0);
+    }
+
+    /* Logout button specific style */
+    .nav-buttons button:last-child {
+      background: #f8f9fa;
+      border-color: #dc3545;
+      color: #dc3545;
+    }
+
+    .nav-buttons button:last-child:hover {
+      background: #dc3545;
+      color: white;
+      box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+    }
+
+    /* Exam cards grid */
+    #examList {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      border: 1px solid #f0f0f0;
+      transition: transform 0.3s, box-shadow 0.3s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .card h3 {
+      font-size: clamp(18px, 4vw, 20px);
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 12px;
+      word-break: break-word;      /* Handle long titles */
+    }
+
+    .card p {
+      font-size: 14px;
+      color: #666;
+      margin: 8px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card p i {
+      color: #667eea;
+      width: 18px;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      margin-top: auto;            /* Push actions to bottom */
+    }
+
+    .edit-btn, .delete-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .edit-btn {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .edit-btn:hover {
+      background: #45a049;
+      box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+    }
+
+    .delete-btn {
+      background: #f44336;
+      color: white;
+    }
+
+    .delete-btn:hover {
+      background: #d32f2f;
+      box-shadow: 0 5px 15px rgba(244, 67, 54, 0.3);
+    }
+
+    /* Empty state */
+    .empty-message {
+      text-align: center;
+      color: #999;
+      font-style: italic;
+      padding: 40px;
+      grid-column: 1 / -1;
+    }
+
+    .empty-message i {
+      font-size: 48px;
+      color: #ddd;
+      margin-bottom: 10px;
+    }
+
+    /* Tablet and smaller laptop adjustments */
+    @media (max-width: 1024px) {
+      .container {
+        padding: 25px;
+      }
+      .nav-buttons button {
+        padding: 10px 16px;
+        white-space: normal;       /* Allow wrapping if needed */
+      }
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+      .container {
+        padding: 20px;
+      }
+      h1 {
+        font-size: 24px;
+      }
+      .nav-buttons button {
+        width: 100%;
+        justify-content: center;
+        white-space: normal;
+        padding: 12px;
+      }
+      #examList {
+        grid-template-columns: 1fr;  /* Single column on mobile */
+      }
+    }
+
+    /* Ensure long exam titles don't overflow */
+    .card h3 {
+      overflow-wrap: break-word;
+      hyphens: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>
+      <i class="fas fa-user-shield"></i> 
+      Admin Dashboard
+    </h1>
+    <div class="nav-buttons">
+      <button onclick="location.href='create-exam.html'"><i class="fas fa-plus-circle"></i> Create Exam</button>
+      <button onclick="location.href='add-question.html'"><i class="fas fa-question-circle"></i> Add Question</button>
+      <button onclick="location.href='admin-students.html'"><i class="fas fa-users"></i> Manage Students</button>
+      <button onclick="location.href='admin-results.html'"><i class="fas fa-chart-bar"></i> View Results</button>
+      <button onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+
+    <h2><i class="fas fa-pencil-alt"></i> All Exams</h2>
+    <div id="examList"></div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
+    if (!token || role !== 'admin') {
+      window.location.href = 'login.html';
+    }
+
+    async function loadExams() {
+      const res = await fetch('/api/exams', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const exams = await res.json();
+      const list = document.getElementById('examList');
+      list.innerHTML = '';
+
+      if (exams.length === 0) {
+        list.innerHTML = '<div class="empty-message"><i class="fas fa-folder-open"></i><br>No exams created yet.</div>';
+        return;
+      }
+
+      exams.forEach(exam => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h3>${exam.title}</h3>
+          <p><i class="fas fa-clock"></i> Duration: ${exam.duration} min</p>
+          <p><i class="fas fa-list-ol"></i> Questions: ${exam.totalQuestions}</p>
+          <p><i class="fas fa-star"></i> Marks per Q: ${exam.marksPerQuestion}</p>
+          <div class="card-actions">
+            <button class="edit-btn" onclick="location.href='edit-exam.html?id=${exam._id}'"><i class="fas fa-edit"></i> Edit</button>
+            <button class="delete-btn" onclick="deleteExam('${exam._id}')"><i class="fas fa-trash-alt"></i> Delete</button>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    async function deleteExam(examId) {
+      if (!confirm('Delete this exam and all its questions? This cannot be undone.')) return;
+      const res = await fetch(`/api/exams/${examId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert('Exam deleted');
+        loadExams();
+      } else {
+        alert(data.msg || 'Error deleting exam');
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      window.location.href = 'login.html';
+    }
+
+    loadExams();
+  </script>
+</body>
+</html>

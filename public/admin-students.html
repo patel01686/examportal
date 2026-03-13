@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Students | Exam Portal</title>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1000px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+    }
+
+    h1 {
+      font-size: clamp(24px, 5vw, 32px);
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h1 i {
+      color: #667eea;
+      font-size: clamp(24px, 5vw, 32px);
+    }
+
+    h2 {
+      font-size: clamp(20px, 4vw, 24px);
+      font-weight: 500;
+      color: #555;
+      margin: 30px 0 20px;
+      border-left: 5px solid #667eea;
+      padding-left: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .back-btn {
+      background: white;
+      border: 2px solid #667eea;
+      color: #667eea;
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .back-btn:hover {
+      background: #667eea;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    /* Table styling */
+    .table-responsive {
+      overflow-x: auto;
+      margin-top: 20px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      min-width: 600px; /* ensures readability on small screens */
+    }
+
+    th {
+      background: #f8f9fa;
+      color: #333;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 16px 12px;
+      text-align: left;
+      border-bottom: 2px solid #e9ecef;
+    }
+
+    td {
+      padding: 16px 12px;
+      font-size: 14px;
+      color: #555;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background-color: #f8f9fa;
+    }
+
+    /* Action buttons */
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .edit-btn, .delete-btn, .view-btn {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: white;
+    }
+
+    .edit-btn {
+      background: #4CAF50;
+    }
+    .edit-btn:hover {
+      background: #45a049;
+      box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+    }
+
+    .delete-btn {
+      background: #f44336;
+    }
+    .delete-btn:hover {
+      background: #d32f2f;
+      box-shadow: 0 5px 15px rgba(244, 67, 54, 0.3);
+    }
+
+    .view-btn {
+      background: #2196F3;
+    }
+    .view-btn:hover {
+      background: #0b7dda;
+      box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
+    }
+
+    .message {
+      text-align: center;
+      margin-top: 20px;
+      font-weight: 500;
+      padding: 12px;
+      border-radius: 8px;
+    }
+
+    .message.success {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .message.error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    /* Empty state */
+    .empty-message {
+      text-align: center;
+      color: #999;
+      padding: 40px;
+      font-style: italic;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+      .action-buttons {
+        flex-direction: column;
+        gap: 5px;
+      }
+      .edit-btn, .delete-btn, .view-btn {
+        width: 100%;
+        justify-content: center;
+      }
+      td {
+        padding: 12px 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>
+      <i class="fas fa-users-cog"></i> 
+      Manage Students
+    </h1>
+    <button class="back-btn" onclick="location.href='admin-dashboard.html'"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
+
+    <h2><i class="fas fa-list"></i> All Students</h2>
+    <div class="table-responsive">
+      <table id="studentsTable">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div id="message" class="message"></div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
+    if (!token || role !== 'admin') {
+      window.location.href = 'login.html';
+    }
+
+    async function loadStudents() {
+      const res = await fetch('/api/admin/students', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const students = await res.json();
+      const tbody = document.querySelector('#studentsTable tbody');
+      tbody.innerHTML = '';
+
+      if (students.length === 0) {
+        const row = tbody.insertRow();
+        const cell = row.insertCell();
+        cell.colSpan = 3;
+        cell.className = 'empty-message';
+        cell.innerHTML = '<i class="fas fa-user-slash" style="font-size: 32px; color: #ddd; margin-bottom: 10px;"></i><br>No students found.';
+        return;
+      }
+
+      students.forEach(student => {
+        const row = tbody.insertRow();
+        row.innerHTML = `
+          <td><i class="fas fa-user-graduate" style="color: #667eea; margin-right: 8px;"></i>${student.name}</td>
+          <td><i class="fas fa-envelope" style="color: #667eea; margin-right: 8px;"></i>${student.email}</td>
+          <td>
+            <div class="action-buttons">
+              <button class="edit-btn" onclick="editStudent('${student._id}', '${student.name}', '${student.email}')"><i class="fas fa-edit"></i> Edit</button>
+              <button class="delete-btn" onclick="deleteStudent('${student._id}')"><i class="fas fa-trash-alt"></i> Delete</button>
+              <button class="view-btn" onclick="viewResults('${student._id}')"><i class="fas fa-chart-line"></i> Results</button>
+            </div>
+          </td>
+        `;
+      });
+    }
+
+    function viewResults(studentId) {
+      window.location.href = `student-results.html?studentId=${studentId}`;
+    }
+
+    async function deleteStudent(id) {
+      if (!confirm('Delete this student? This will also delete their results.')) return;
+      const res = await fetch(`/api/admin/students/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      const msgEl = document.getElementById('message');
+      if (res.ok) {
+        msgEl.innerHTML = '<i class="fas fa-check-circle"></i> Student deleted successfully';
+        msgEl.className = 'message success';
+        loadStudents();
+      } else {
+        msgEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + (data.msg || 'Error');
+        msgEl.className = 'message error';
+      }
+    }
+
+    function editStudent(id, currentName, currentEmail) {
+      const newName = prompt('Enter new name:', currentName);
+      if (!newName) return;
+      const newEmail = prompt('Enter new email:', currentEmail);
+      if (!newEmail) return;
+      updateStudent(id, newName, newEmail);
+    }
+
+    async function updateStudent(id, name, email) {
+      const res = await fetch(`/api/admin/students/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ name, email })
+      });
+      const data = await res.json();
+      const msgEl = document.getElementById('message');
+      if (res.ok) {
+        msgEl.innerHTML = '<i class="fas fa-check-circle"></i> Student updated successfully';
+        msgEl.className = 'message success';
+        loadStudents();
+      } else {
+        msgEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + (data.msg || 'Error');
+        msgEl.className = 'message error';
+      }
+    }
+
+    loadStudents();
+  </script>
+</body>
+</html>
