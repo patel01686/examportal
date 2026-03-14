@@ -1,20 +1,20 @@
 const Exam = require('../models/Exam');
 const Question = require('../models/Question');
 const Result = require('../models/Result');
-const User = require('../models/User');          // needed for profile
-const bcrypt = require('bcryptjs');               // needed for updateProfile
+const User = require('../models/User');
+const bcrypt = require('bcryptjs');
 
-// Get all available exams
+// 📌 Get all available exams
 exports.getExams = async (req, res) => {
   try {
-    const exams = await Exam.find().select('title duration totalQuestions marksPerQuestion');
+    const exams = await Exam.find().select('title duration totalQuestions marksPerQuestion password');
     res.json(exams);
   } catch (err) {
     res.status(500).json({ msg: 'Server error' });
   }
 };
 
-// Start exam – returns exam details + all questions (no answers)
+// 📌 Start exam – returns exam details + all questions (no answers)
 exports.startExam = async (req, res) => {
   try {
     const { examId } = req.params;
@@ -28,7 +28,27 @@ exports.startExam = async (req, res) => {
   }
 };
 
-// Submit exam – expects answers array: [{ questionId, selected }]
+// 📌 Verify exam password
+exports.verifyExamPassword = async (req, res) => {
+  try {
+    const { examId } = req.params;
+    const { password } = req.body;
+    const exam = await Exam.findById(examId);
+    if (!exam) return res.status(404).json({ msg: 'Exam not found' });
+
+    // If password is set, check it
+    if (exam.password && exam.password !== password) {
+      return res.status(401).json({ msg: 'Invalid password' });
+    }
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+};
+
+// 📌 Submit exam – expects answers array: [{ questionId, selected }]
 exports.submitExam = async (req, res) => {
   try {
     const { examId } = req.params;
@@ -94,7 +114,7 @@ exports.submitExam = async (req, res) => {
   }
 };
 
-// Get result by examId
+// 📌 Get result by examId
 exports.getResult = async (req, res) => {
   try {
     const { examId } = req.params;
@@ -107,7 +127,7 @@ exports.getResult = async (req, res) => {
   }
 };
 
-// Get exam review (detailed answers)
+// 📌 Get exam review (detailed answers)
 exports.getExamReview = async (req, res) => {
   try {
     const { examId } = req.params;
@@ -123,7 +143,7 @@ exports.getExamReview = async (req, res) => {
   }
 };
 
-// Get student profile
+// 📌 Get student profile
 exports.getProfile = async (req, res) => {
   try {
     const student = await User.findById(req.user.userId).select('-password');
@@ -133,7 +153,7 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-// Update student profile (name and password)
+// 📌 Update student profile (name and password)
 exports.updateProfile = async (req, res) => {
   try {
     const { name, currentPassword, newPassword } = req.body;
@@ -156,7 +176,7 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-// Get student exam history
+// 📌 Get student exam history
 exports.getHistory = async (req, res) => {
   try {
     const results = await Result.find({ studentId: req.user.userId })

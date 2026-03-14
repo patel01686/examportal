@@ -6,7 +6,8 @@ const {
   startExam, 
   submitExam, 
   getResult,
-  getExamReview,    // new function
+  getExamReview,
+  verifyExamPassword,   // 👈 Add this line
   getProfile,
   updateProfile,
   getHistory
@@ -21,7 +22,8 @@ router.get('/exams', getExams);
 router.get('/exam/:examId/start', startExam);
 router.post('/exam/:examId/submit', submitExam);
 router.get('/result/:examId', getResult);
-router.get('/exam/:examId/review', getExamReview);   // new route
+router.get('/exam/:examId/review', getExamReview);
+router.post('/exam/:examId/verify-password', verifyExamPassword);  // 👈 This line now works
 router.get('/profile', getProfile);
 router.put('/profile', updateProfile);
 router.get('/history', getHistory);

@@ -74,3 +74,14 @@ exports.updateExam = async (req, res) => {
     res.status(500).json({ msg: 'Server error' });
   }
 };
+
+exports.createExam = async (req, res) => {
+  try {
+    const { title, duration, totalQuestions, marksPerQuestion, password } = req.body;  // 👈 password add karo
+    const exam = new Exam({ title, duration, totalQuestions, marksPerQuestion, password });
+    await exam.save();
+    res.status(201).json({ msg: 'Exam created', examId: exam._id });
+  } catch (err) {
+    res.status(500).json({ msg: 'Server error' });
+  }
+};

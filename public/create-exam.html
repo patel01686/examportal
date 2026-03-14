@@ -170,6 +170,9 @@
       <label for="marksPerQuestion"><i class="fas fa-star"></i> Marks Per Question</label>
       <input type="number" id="marksPerQuestion" placeholder="1" min="1" required>
 
+      <label for="password"><i class="fas fa-lock"></i> Exam Password (optional)</label>
+      <input type="text" id="password" placeholder="Set exam password (optional)">
+
       <button type="submit"><i class="fas fa-check-circle"></i> Create Exam</button>
     </form>
     <p id="message" class="message"></p>
@@ -183,12 +186,16 @@
 
     document.getElementById('examForm').addEventListener('submit', async (e) => {
       e.preventDefault();
+      
+      // Collect form data including password
       const exam = {
         title: document.getElementById('title').value,
         duration: parseInt(document.getElementById('duration').value),
         totalQuestions: parseInt(document.getElementById('totalQuestions').value),
-        marksPerQuestion: parseInt(document.getElementById('marksPerQuestion').value)
+        marksPerQuestion: parseInt(document.getElementById('marksPerQuestion').value),
+        password: document.getElementById('password').value || null   // 👈 Password field added
       };
+
       const res = await fetch('/api/exams', {
         method: 'POST',
         headers: {
@@ -197,6 +204,7 @@
         },
         body: JSON.stringify(exam)
       });
+      
       const data = await res.json();
       const msgEl = document.getElementById('message');
       if (res.ok) {

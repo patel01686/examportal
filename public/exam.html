@@ -6,7 +6,7 @@
   <title>Exam | Exam Portal</title>
   <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Font Awesome (optional, for icons) -->
+  <!-- Font Awesome icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
     * {
@@ -175,7 +175,6 @@
       transform: translateY(-2px);
     }
 
-    /* Responsive adjustments */
     @media (max-width: 600px) {
       #exam-container {
         padding: 20px 15px;
@@ -206,7 +205,6 @@
   </div>
 
   <script>
-    // --- YOUR EXACT ORIGINAL SCRIPT (unchanged) ---
     const token = localStorage.getItem('token');
     if (!token || localStorage.getItem('role') !== 'student') {
       window.location.href = 'login.html';
@@ -217,9 +215,9 @@
     let exam = null;
     let questions = [];
     let currentIndex = 0;
-    let answers = []; // { questionId, selected }
+    let answers = [];
     let timerInterval = null;
-    let duration = 0; // in seconds
+    let duration = 0;
 
     // Anti-cheating
     document.addEventListener('contextmenu', e => e.preventDefault());
@@ -273,10 +271,10 @@
         div.innerHTML = `
           <h3><i class="fas fa-question-circle"></i> Question ${idx+1}: ${q.question}</h3>
           <div class="options">
-            <label><input type="radio" name="q${idx}" value="A" ${answers[idx] && answers[idx].selected === 'A' ? 'checked' : ''}> ${q.optionA}</label>
-            <label><input type="radio" name="q${idx}" value="B" ${answers[idx] && answers[idx].selected === 'B' ? 'checked' : ''}> ${q.optionB}</label>
-            <label><input type="radio" name="q${idx}" value="C" ${answers[idx] && answers[idx].selected === 'C' ? 'checked' : ''}> ${q.optionC}</label>
-            <label><input type="radio" name="q${idx}" value="D" ${answers[idx] && answers[idx].selected === 'D' ? 'checked' : ''}> ${q.optionD}</label>
+            <label><input type="radio" name="q${idx}" value="A" ${answers[idx]?.selected === 'A' ? 'checked' : ''}> ${q.optionA}</label>
+            <label><input type="radio" name="q${idx}" value="B" ${answers[idx]?.selected === 'B' ? 'checked' : ''}> ${q.optionB}</label>
+            <label><input type="radio" name="q${idx}" value="C" ${answers[idx]?.selected === 'C' ? 'checked' : ''}> ${q.optionC}</label>
+            <label><input type="radio" name="q${idx}" value="D" ${answers[idx]?.selected === 'D' ? 'checked' : ''}> ${q.optionD}</label>
           </div>
         `;
         container.appendChild(div);
@@ -351,7 +349,8 @@
       if (res.ok) {
         const data = await res.json();
         localStorage.setItem('lastResult', JSON.stringify(data.result));
-        window.location.href = 'result.html';
+        // ✅ Redirect with examId in query string
+        window.location.href = `result.html?examId=${examId}`;
       } else {
         alert('Submission failed');
       }

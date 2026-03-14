@@ -193,51 +193,93 @@
   </div>
 
   <script>
-    const result = JSON.parse(localStorage.getItem('lastResult'));
-    if (!result) {
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
+    if (!token || role !== 'student') {
+      window.location.href = 'login.html';
+    }
+
+    // Get examId from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const examId = urlParams.get('examId');
+    
+    // Try to get result from localStorage first (fallback)
+    let result = null;
+    try {
+      result = JSON.parse(localStorage.getItem('lastResult'));
+    } catch (e) {
+      console.error('Failed to parse lastResult from localStorage', e);
+    }
+
+    // If we have examId but no result in localStorage, fetch from API
+    if (examId && (!result || result.examId !== examId)) {
+      fetchResultFromAPI(examId);
+    } else if (result) {
+      displayResult(result);
+    } else {
       window.location.href = 'student-dashboard.html';
     }
 
-    // Display result stats
-    const total = result.correct + result.wrong + result.skipped;
-    document.getElementById('result').innerHTML = `
-      <div class="stat-card stat-total">
-        <div class="stat-icon"><i class="fas fa-list-ol"></i></div>
-        <div class="stat-label">Total</div>
-        <div class="stat-value">${total}</div>
-      </div>
-      <div class="stat-card stat-correct">
-        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
-        <div class="stat-label">Correct</div>
-        <div class="stat-value">${result.correct}</div>
-      </div>
-      <div class="stat-card stat-wrong">
-        <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
-        <div class="stat-label">Wrong</div>
-        <div class="stat-value">${result.wrong}</div>
-      </div>
-      <div class="stat-card stat-skipped">
-        <div class="stat-icon"><i class="fas fa-forward"></i></div>
-        <div class="stat-label">Skipped</div>
-        <div class="stat-value">${result.skipped}</div>
-      </div>
-      <div class="stat-card stat-score" style="grid-column: span 2;">
-        <div class="stat-icon"><i class="fas fa-star"></i></div>
-        <div class="stat-label">Score</div>
-        <div class="stat-value">${result.score.toFixed(2)}%</div>
-      </div>
-    `;
+    async function fetchResultFromAPI(examId) {
+      try {
+        const res = await fetch(`/api/student/result/${examId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error('Result not found');
+        const data = await res.json();
+        displayResult(data);
+      } catch (err) {
+        console.error(err);
+        window.location.href = 'student-dashboard.html';
+      }
+    }
 
-    // Set up review button
-    const reviewBtn = document.getElementById('reviewBtn');
-    if (result.examId) {
-      reviewBtn.onclick = function() {
-        window.location.href = `exam-review.html?examId=${result.examId}`;
-      };
-    } else {
-      reviewBtn.disabled = true;
-      reviewBtn.style.opacity = 0.5;
-      reviewBtn.title = 'Review not available';
+    function displayResult(result) {
+      const total = result.correct + result.wrong + result.skipped;
+      document.getElementById('result').innerHTML = `
+        <div class="stat-card stat-total">
+          <div class="stat-icon"><i class="fas fa-list-ol"></i></div>
+          <div class="stat-label">Total</div>
+          <div class="stat-value">${total}</div>
+        </div>
+        <div class="stat-card stat-correct">
+          <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+          <div class="stat-label">Correct</div>
+          <div class="stat-value">${result.correct}</div>
+        </div>
+        <div class="stat-card stat-wrong">
+          <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+          <div class="stat-label">Wrong</div>
+          <div class="stat-value">${result.wrong}</div>
+        </div>
+        <div class="stat-card stat-skipped">
+          <div class="stat-icon"><i class="fas fa-forward"></i></div>
+          <div class="stat-label">Skipped</div>
+          <div class="stat-value">${result.skipped}</div>
+        </div>
+        <div class="stat-card stat-score" style="grid-column: span 2;">
+          <div class="stat-icon"><i class="fas fa-star"></i></div>
+          <div class="stat-label">Score</div>
+          <div class="stat-value">${result.score.toFixed(2)}%</div>
+        </div>
+      `;
+
+      // Set up review button
+      const reviewBtn = document.getElementById('reviewBtn');
+      if (result.examId) {
+        reviewBtn.onclick = function() {
+          window.location.href = `exam-review.html?examId=${result.examId}`;
+        };
+      } else {
+        reviewBtn.disabled = true;
+        reviewBtn.style.opacity = 0.5;
+        reviewBtn.title = 'Review not available';
+      }
+    }
+
+    function reviewExam() {
+      // This function is called by the button's onclick
+      // The actual logic is set dynamically in displayResult
     }
   </script>
 </body>
